@@ -3,31 +3,32 @@ var User = require('../models').User;
 
 var router = express.Router();
 
-router.get('/', function(req, res, next) {
-  User.findAll()
-    .then((users) => {
-      res.json(users);
-    })
-    .catch((err) => {
-      console.error(err);
-      next(err);
-    });
+router.get('/', async(req, res, next) => {
+  try {
+      const users = await User.findAll();
+      res.render('sequelize',{users});
+  }
+  catch(err){
+    console.error(err);
+    next(err);
+  }
 });
 
-router.post('/', function(req, res, next) {
-  User.create({
-    name: req.body.name,
-    age: req.body.age,
-    married: req.body.married,
-  })
-    .then((result) => {
-      console.log(result);
-      res.status(201).json(result);
+router.post('/', async(req, res, next) => {
+  try{
+    const result = await User.create({
+      name:req.body.name,
+      age:req.body.age,
+      married:req.body.married,
     })
-    .catch((err) => {
-      console.error(err);
-      next(err);
-    });
+
+    console.log(result);
+    res.status(201).json(result);
+
+  }catch(err){
+    console.log(err);
+    next(err);
+  }
 });
 
 module.exports = router;
